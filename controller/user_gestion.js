@@ -21,7 +21,6 @@ db.collection('membres').insertOne( {
   });
   userdata  = {
       "username" : body.username,
-      "pass" : body.pass,
       "mail" : body.mail,
       "nom" : body.nom,
       "prenom" : body.prenom,
