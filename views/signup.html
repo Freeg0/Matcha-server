@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>Session Management in NodeJS using Express4.2</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+<script>
+$(document).ready(function(){
+	$("#submit").click(function(){
+		window.location.href="/main";
+	});
+});
+</script>
+<script>
+$(document).ready(function(){
+	var username,pass,pass2,email,nom,prenom;
+	$("#submit2").click(function(){
+		username=$("#username").val();
+		pass=$("#password").val();
+		pass2=$("#password2").val();
+		mail=$("#email").val();
+		nom=$("#nom").val();
+		prenom=$("#prenom").val();
+		$.post("http://localhost:3000/signup",{username:username,pass:pass,pass2:pass2,mail:mail,nom:nom,prenom:prenom},function(data){
+			if(data==='done')			
+			{
+				window.location.href="/main";
+			}
+		});
+	});
+});
+</script>
+</head>
+<body>
+<h1>TEEEEESTT SIGNUP</h1>
+<input type="username" size="40" placeholder="Psername" id="username"><br />
+<input type="password" size="40" placeholder="Password" id="password"><br />
+<input type="password" size="40" placeholder="Confirm your password" id="password2"><br />
+<input type="text" size="40" placeholder="Mail" id="email"><br />
+<input type="password" size="40" placeholder="Name" id="nom"><br />
+<input type="text" size="40" placeholder="Surname" id="prenom"><br />
+<input type="button" value="Login" id="submit">
+<input type="button" value="SignUp" id="submit2">
+</body>
+</html>
