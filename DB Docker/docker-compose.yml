@@ -1,0 +1,12 @@
+
+mongo:
+  image: mvertes/alpine-mongo
+  ports:
+    - "27017:27017"
+
+mogoexpress:
+  image: mongo-express
+  links:
+    - mongo
+  ports:
+    - "8081:8081"
