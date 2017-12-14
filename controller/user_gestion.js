@@ -1,5 +1,6 @@
 const bcrypt  = require('bcrypt');
 var assert = require('assert');
+var bcrypt2 = require('bcrypt');
 
 // Ajout Utilisateur DB
 
@@ -67,14 +68,31 @@ var addUser = function(body, MongoClient, url, callback) {
 
 //Login Utilisateur
 
-var findUsername = async function(username, db, callback) {
+var findUsername = async function(body, db, callback) {
   var userdata;
-  var cursor =db.collection('membres').find( { "username": username } );
-  while(await cursor.hasNext()) {
-    const doc = await cursor.next();
-    userdata = doc;
-  }
-  callback(userdata);
+  var cursor = db.collection('membres').findOne( { "mail": body.mail } , function (err, result) {
+    console.log ("Result : " + result)
+    if (result != null)
+    {
+      bcrypt.compare(body.password, result.pass).then(function(res) {
+        console.log("RES : " + res);
+        userdata = result;
+        if (res == true)
+        {
+          callback(userdata);
+        }
+        else
+        {
+          callback(null);
+        }
+      });
+    }
+    else
+    {
+      callback(null);
+    }
+    db.close();
+  });
 };
 
 
@@ -82,8 +100,8 @@ function checkUser (body, MongoClient, url, callback) {
   MongoClient.connect(url, function(err, db)
   {
     assert.equal(null, err);
-    findUsername(body.username, db, function(userdata) {
-        db.close();
+    findUsername(body, db, function(userdata) {
+       // db.close();
         callback(userdata);
     });
   });
