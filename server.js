@@ -56,7 +56,7 @@ app.post('/login',function(req,res){
 	sess=req.session;
 	userGest.checkUser(req.body, MongoClient, url, function(userdata) {
 		sess.data = userdata;
-		if (userdata)
+		if (userdata != null)
 		{
 			res.json({
 				userdata
@@ -66,8 +66,6 @@ app.post('/login',function(req,res){
 		{
 			res.status(401).json({ error: 'Error' });
 		}
- 		console.log ("Sess data : " + sess.data);
- 		console.log ("Sess data user : " + sess.data.username);
     });
 });
 
