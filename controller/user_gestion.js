@@ -70,7 +70,7 @@ var addUser = function(body, MongoClient, url, callback) {
 
 var findUsername = async function(body, db, callback) {
   var userdata;
-  var cursor = db.collection('membres').findOne( { "mail": body.mail } , function (err, result) {
+  var cursor = db.collection('membres').findOne( { "username": body.username } , function (err, result) {
     console.log ("Result : " + result)
     if (result != null)
     {
