@@ -45,10 +45,13 @@ app.post('/login',function(req,res){
 	var test;
 	sess=req.session;
 	userGest.checkUser(req.body, MongoClient, url, function(userdata) {
+		if (userdata == null) {
+			res.status(401);
+		}
+ 		sess.data = userdata;
         res.json({
  			userdata
- 		});
- 		sess.data = userdata;
+		 });
  		console.log ("Sess data : " + sess.data);
  		console.log ("Sess data user : " + sess.data.username);
     });
@@ -65,6 +68,9 @@ app.post('/signup',function(req,res){
 			}
 			else
 			{
+				if (userdata == null) {
+					res.status(401);
+				}
 				res.json({
 					userdata
 				});
