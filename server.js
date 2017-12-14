@@ -15,8 +15,8 @@ var likeConsult	=	require('./controller/liked_consulted.js');
 var consult		=	require('./controller/consult.js');
 var session		=	require('express-session');
 var bodyParser	= 	require('body-parser');
-var express = require('express');  
-var app = express();
+var express 	=	require('express');  
+var app 		=	express();
 
 
 var MongoClient = require('mongodb').MongoClient,
@@ -218,6 +218,15 @@ io.on('connection', function(socket){
   });
 });
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
+app.use(allowCrossDomain);
 
 server.listen(4242,function(){
 	console.log(new Date());
