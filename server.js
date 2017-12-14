@@ -45,9 +45,9 @@ app.post('/login',function(req,res){
 	var test;
 	sess=req.session;
 	userGest.checkUser(req.body, MongoClient, url, function(userdata) {
-		if (userdata == null) {
-			res.status(401);
-		}
+		/*if (userdata == null) {
+			res.status(401).json({ error: 'Error : no datas' });
+		}*/
  		sess.data = userdata;
         res.json({
  			userdata
