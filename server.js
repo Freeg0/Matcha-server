@@ -219,8 +219,8 @@ io.on('connection', function(socket){
 });
 
 
-server.listen(3000,function(){
+server.listen(4242,function(){
 	console.log(new Date());
-	console.log("App Started on PORT 3000");
+	console.log("App Started on PORT 4242");
 });
 
