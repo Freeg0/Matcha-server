@@ -33,6 +33,16 @@ MongoClient.connect(url, function(err, db) {
   db.close();
 });
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
+app.use(allowCrossDomain);
+
 app.use(session({secret: 'ssshhhhh',saveUninitialized: true,resave: true}));
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -223,16 +233,6 @@ io.on('connection', function(socket){
     io.emit('chat message', msg);
   });
 });
-
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    next();
-}
-
-app.use(allowCrossDomain);
 
 server.listen(4242,function(){
 	console.log(new Date());
