@@ -15,7 +15,8 @@ db.collection('membres').insertOne( {
       "sexe" : body.sexe,
       "orient" : body.orient,
       "tags" : body.tags,
-      "pics" : body.pics
+      "pics" : body.pics,
+      "descripion" : body.desc
   }, function(err, result) {
     assert.equal(err, null);
     console.log("Utilisateur ajouté à la DB avec succès");
@@ -28,7 +29,8 @@ db.collection('membres').insertOne( {
       "sexe" : body.sexe,
       "orient" : body.orient,
       "tags" : body.tags,
-      "pics" : body.pics
+      "pics" : body.pics,
+      "descripion" : body.desc
   };
   callback(userdata);
 };
@@ -43,7 +45,7 @@ var findUsername2 = async function(username, db, callback) {
   callback(index);
 };
 
-var addUser = function(body, MongoClient, url, callback) {
+var addUser = function(body, MongoClient, url, res, sess) {
   bcrypt.hash(body.pass, 10, function(err, hash) {
     body.pass = hash;
     MongoClient.connect(url, function(err, db) {
@@ -51,14 +53,19 @@ var addUser = function(body, MongoClient, url, callback) {
       findUsername2(body.username, db, function(index) {
         if (index > 0)
         {
-          callback();
+          res.status(401).json({ error: 'User Allready Exist' });
         }
         else
         {
           insertDocument(body, db, function(userdata) {
             db.close();
-            console.log("Userdata : " + userdata);
-            callback(userdata);
+            if (userdata == null) {
+              res.status(401);
+            }
+            res.json({
+              userdata
+            });
+            sess.data = userdata;
           });
         }
       });
@@ -96,13 +103,23 @@ var findUsername = async function(body, db, callback) {
 };
 
 
-function checkUser (body, MongoClient, url, callback) {
+function checkUser (body, MongoClient, url, res, sess) {
   MongoClient.connect(url, function(err, db)
   {
     assert.equal(null, err);
     findUsername(body, db, function(userdata) {
-       // db.close();
-        callback(userdata);
+       db.close();
+		  if (userdata != null)
+		  {
+        sess.data = userdata;
+			  res.json({
+				  userdata
+			  });
+		  }
+		  else
+		  {
+			  res.status(401).json({ error: 'Error' });
+		  }
     });
   });
 };

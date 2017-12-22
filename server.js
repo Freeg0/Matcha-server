@@ -10,7 +10,7 @@ var sugest		=	require('./controller/sugest.js');
 var tagGestion	=	require('./controller/tag_gestion.js');
 var liked		=	require('./controller/liked.js');
 var like		=	require('./controller/like.js');
-var userGest	=	require('./controller/user_gestion.js');
+var userGest	=	require('./controller/Auth.js');
 var likeConsult	=	require('./controller/liked_consulted.js');
 var consult		=	require('./controller/consult.js');
 var session		=	require('express-session');
@@ -53,47 +53,16 @@ var sess;
 
 app.post('/login',function(req,res){
 	var test;
-	sess=req.session;
-	userGest.checkUser(req.body, MongoClient, url, function(userdata) {
-		sess.data = userdata;
-		if (userdata != null)
-		{
-			res.json({
-				userdata
-			});
-		}
-		else
-		{
-			res.status(401).json({ error: 'Error' });
-		}
-    });
+	sess = req.session;
+	userGest.checkUser(req.body, MongoClient, url, res, sess);
 });
 
 app.post('/signup',function(req,res){
-	sess=req.session;
+	sess = req.session;
 	if (req.body.pass == req.body.pass2)
-	{
-		userGest.addUser(req.body, MongoClient, url, function(userdata) {
-			if (userdata == null)
-			{
-				res.status(401).json({ error: 'User Allready Exist' });
-			}
-			else
-			{
-				if (userdata == null) {
-					res.status(401);
-				}
-				res.json({
-					userdata
-				});
-				sess.data = userdata;
-			}
-    	});
-	}
+		userGest.addUser(req.body, MongoClient, url, res, sess);
 	else
-	{
 		res.status(401).json({ error: 'Differents Passwords' });
-	}
 });
 
 app.post('/update',function(req,res){
@@ -200,44 +169,30 @@ app.get('/taglist',function(req,res){
 app.get('/logout',function(req,res){
 	
 	req.session.destroy(function(err){
-		if(err){
-			console.log(err);
-		}
-		else
-		{
-			res.redirect('/');
-		}
+		
 	});
-
 });
 
   
 var server = require('http').createServer(app);  
+
+// TEMPS REEL POUR NOTIFS ET CHAT Socket.IO //
+
 var io = require('socket.io')(server);
 
-/*
-// Quand un client se connecte, on le note dans la console
-io.sockets.on('connection', function (socket) {
-    console.log('Un client est connecté !');
+io.on('connection', (client) => {
+	console.log('Un client est connecté !');
+	client.on('subscribeToTimer', (interval) => {
+	  console.log('client is subscribing to timer with interval ', interval);
+	  setInterval(() => {
+		client.emit('timer', new Date());
+	  }, interval);
+	});
 });
 
-app.listen(3000,function(){
-	console.log(new Date());
-	console.log("App Started on PORT 3000");
-});*/
-
-app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/chat.html');
-});
-
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-});
+/////////////////////////////////////////////
 
 server.listen(4242,function(){
 	console.log(new Date());
 	console.log("App Started on PORT 4242");
 });
-
